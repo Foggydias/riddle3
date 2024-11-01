@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Código Morse - Desafio</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #282c34;
+      color: white;
+      font-family: Arial, sans-serif;
+      flex-direction: column;
+      text-align: center;
+    }
+    .play-button, .hint-button {
+      background-color: #61dafb;
+      color: #282c34;
+      border: none;
+      padding: 15px 30px;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+    .play-button:hover, .hint-button:hover {
+      background-color: #21a1f1;
+    }
+    .display {
+      font-size: 24px;
+      margin-top: 20px;
+      font-weight: bold;
+      display: none; /* Escondido por padrão */
+    }
+  </style>
+</head>
+<body>
+  <h1>Scape Room - ???</h1>
+  <p>Cliqua para ouvir.</p>
+  <button class="play-button" onclick="playMorse()">Play</button>
+  <button class="hint-button" onclick="toggleHint()">Mostrar Dica</button>
+  <div class="display" id="display">Dica:</div>
+
+  <script>
+    const morseCode = {
+      'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....', 
+      'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 
+      'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 
+      'Y': '-.--', 'Z': '--..', ' ': ' ', ',': '--..--', '.': '.-.-.-'
+    };
+    const message = "Quando estou por perto, tudo ao redor é aquecido";
+    
+    let hintVisible = false; // Estado inicial da dica
+
+    function toggleHint() {
+      const display = document.getElementById("display");
+      hintVisible = !hintVisible;
+      display.style.display = hintVisible ? "block" : "none";
+      document.querySelector(".hint-button").textContent = hintVisible ? "Esconder Dica" : "Mostrar Dica";
+    }
+
+    function playMorse() {
+      const dotSound = new Audio('dot.mp3');
+      const dashSound = new Audio('dash.mp3');
+      const display = document.getElementById("display");
+      const silenceDuration = 200; // Intervalo entre cada letra
+      let delay = 0;
+
+      message.toUpperCase().split('').forEach(char => {
+        const code = morseCode[char];
+        if (code) {
+          setTimeout(() => {
+            if (hintVisible) {
+              display.textContent = `Letra: ${char} | Código: ${code}`;
+            }
+          }, delay);
+
+          code.split('').forEach(symbol => {
+            setTimeout(() => {
+              if (symbol === '.') dotSound.play();
+              else if (symbol === '-') dashSound.play();
+            }, delay);
+            delay += symbol === '.' ? 200 : 600; // Duração dos pontos e traços
+          });
+          delay += silenceDuration; // Intervalo após cada letra
+        }
+      });
+
+      setTimeout(() => {
+        if (hintVisible) {
+          display.textContent = "Dica:";
+        }
+      }, delay);
+    }
+  </script>
+</body>
+</html>
